@@ -3,6 +3,7 @@
 namespace Mdayo\User\Http\Controllers;
 
 use Mdayo\User\Http\Requests\AuthRegisterRequest;
+use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use Mdayo\User\Models\User;
 use Illuminate\Support\Facades\Hash;

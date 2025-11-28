@@ -56,8 +56,8 @@ class AuthController extends Controller
     /**
      * Standard success response
      */
-    
-    public function __construct(protected string $model){
+    protected string $model;
+    public function __construct(){
         $this->model??=config('user.model');
     }
     private function successResponse(string $message, $data = null, int $status = 200)

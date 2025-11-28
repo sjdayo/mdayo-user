@@ -106,8 +106,12 @@ class AuthController extends Controller
             'email' => $email,
             'password' => bcrypt($password)
         ]);
-
-        $role = Role::firstOrCreate(['name' => config('user.default_user_role', 'user')]);
+        $userRole = config('user.default_user_role','admin');
+        if($request->user())
+        {
+            $userRole = $request->role;   
+        }
+        $role = Role::firstOrCreate(['name' => $userRole]);
         $user->assignRole($role);
 
         return $this->successResponse('User registration successful', $user);

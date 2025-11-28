@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Mdayo\User\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @group User Management
@@ -100,24 +101,27 @@ class AuthController extends Controller
     public function register(AuthRegisterRequest $request)
     {
         $validated = $request->validated();
-        extract($validated);
-
-        $user = User::create([
-            'name' => $name,
-            'email' => $email,
-            'password' => bcrypt($password)
-        ]);
-        $userRole = config('user.default_user_role','admin');
-        if($request->user())
-        {
-            if($request->user()->hasRole('admin') && $request->user()->can('manage_user')){
-                $userRole = $request->role;   
+        
+        return DB::transaction(function() use($validated,$request){
+            extract($validated);
+            $user = User::create([
+                'name' => $name,
+                'email' => $email,
+                'password' => bcrypt($password)
+            ]);
+            $userRole = config('user.default_user_role','admin');
+            if($request->user())
+            {
+                if($request->user()->hasRole('admin') && $request->user()->can('manage_user')){
+                    $userRole = $request->role;   
+                }
             }
-        }
-        $role = Role::firstOrCreate(['name' => $userRole]);
-        $user->assignRole($role);
+            $role = Role::firstOrCreate(['name' => $userRole]);
+            $user->assignRole($role);
+            return $this->successResponse('User registration successful', $user);
+        });
 
-        return $this->successResponse('User registration successful', $user);
+      
     }
 
     /**

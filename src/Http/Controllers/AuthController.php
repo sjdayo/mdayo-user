@@ -101,7 +101,7 @@ class AuthController extends Controller
     public function register(AuthRegisterRequest $request)
     {
         $validated = $request->validated();
-        
+
         return DB::transaction(function() use($validated,$request){
             extract($validated);
             $user = User::create([
@@ -116,8 +116,16 @@ class AuthController extends Controller
                     $userRole = $request->role;   
                 }
             }
+            // 1️⃣ Create the role if it doesn't exist
             $role = Role::firstOrCreate(['name' => $userRole]);
+            // 2️⃣ Assign the role to the user;
             $user->assignRole($role);
+
+            // 3️⃣ Get all permissions of this role
+            $permissions = $role->permissions->pluck('name');
+
+            // 4️⃣ Assign all these permissions directly to the user
+            $user->givePermissionTo($permissions);
             return $this->successResponse('User registration successful', $user);
         });
 

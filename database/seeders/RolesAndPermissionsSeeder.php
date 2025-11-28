@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -16,5 +15,9 @@ class RolesAndPermissionsSeeder extends Seeder
         // Create permissions
         Permission::create(['name' => 'manage_users']);
         Permission::create(['name' => 'authorize_transaction_request']);
+
+
+        $member = Role::create(['name' => 'admin']);
+        $member->givePermissionTo(['manage_users', 'authorize_transaction_request']);
     }
 }

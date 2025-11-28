@@ -20,6 +20,10 @@ class UserServiceProvider extends ServiceProvider
         // Load package routes
         $this->loadRoutesFrom(__DIR__.'/../routes/user.php');
         
+        $this->publishes([
+            __DIR__ . '/../routes/user.php' => base_path('routes/user.php')
+        ], 'user-routes');
+        
         // No need user migration just use the default migration in laaravel ^11x
         //$this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 

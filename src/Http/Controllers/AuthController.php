@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Mdayo\User\Http\Controllers;
 
-use App\Http\Requests\AuthRegisterRequest;
+use Mdayo\User\Http\Requests\AuthRegisterRequest;
 use Illuminate\Http\Request;
-use App\Models\User;
+use Mdayo\User\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 

@@ -5,7 +5,6 @@ namespace Mdayo\User\Http\Controllers;
 use Mdayo\User\Http\Requests\AuthRegisterRequest;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
-use Mdayo\User\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
@@ -57,6 +56,10 @@ class AuthController extends Controller
     /**
      * Standard success response
      */
+    
+    public function __construct(protected string $model){
+        $this->model??=config('user.model');
+    }
     private function successResponse(string $message, $data = null, int $status = 200)
     {
         return response()->json([
@@ -104,7 +107,8 @@ class AuthController extends Controller
 
         return DB::transaction(function() use($validated,$request){
             extract($validated);
-            $user = User::create([
+            
+            $user = $this->model::create([
                 'name' => $name,
                 'email' => $email,
                 'password' => bcrypt($password)
@@ -166,8 +170,8 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
-
-        $user = User::where('email', $request->email)->first();
+        
+        $user = $this->model::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Invalid credentials'], 401);

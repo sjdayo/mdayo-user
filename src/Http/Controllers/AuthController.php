@@ -110,7 +110,9 @@ class AuthController extends Controller
         $userRole = config('user.default_user_role','admin');
         if($request->user())
         {
-            $userRole = $request->role;   
+            if($request->user()->hasRole('admin') && $request->user()->can('manage_user')){
+                $userRole = $request->role;   
+            }
         }
         $role = Role::firstOrCreate(['name' => $userRole]);
         $user->assignRole($role);

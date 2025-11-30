@@ -1,5 +1,5 @@
 <?php
-use Illuminate\Support\Facades\Hash;
+
 return [
    'model'=>Mdayo\User\Models\User::class,
    'auth_token_name'=> env('AUTH_TOKEN_NAME','api-token'),
@@ -7,6 +7,6 @@ return [
    'default_admin'=>[
         'email' => 'admin@gmail.com',
         'name'=> 'admin',
-        'password'=>Hash::make('123456')
+        'password'=>'123456'
    ]
 ];

@@ -111,7 +111,7 @@ class AuthController extends Controller
             $user = $this->model::create([
                 'name' => $name,
                 'email' => $email,
-                'password' => bcrypt($password)
+                'password' => Hash::make($password)
             ]);
             $userRole = config('user.default_user_role','admin');
             if($request->user())

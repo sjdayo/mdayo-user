@@ -15,9 +15,9 @@ class UsersSeeder extends Seeder
                 'password' => Hash::make(config('user.default_admin.password'))
         ]);
         $role = Role::firstOrCreate(['name' => 'admin']);
-        $user->assignRole($role);
+        $user->syncRoles($role);
 
-        $permissions = $role->permissions->pluck('name');
-        $user->givePermissionTo($permissions);
+        $permissions = $role->permissions->pluck('name')->toArray();
+        $user->syncPermissions($permissions);
     }
 }

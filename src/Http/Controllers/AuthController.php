@@ -100,6 +100,38 @@ class AuthController extends Controller
      *     ),
      *     @OA\Response(response=400, description="Invalid input")
      * )
+     *  
+     * @OA\Post(
+     *     path="/user/create",
+     *     tags={"User"},
+     *     summary="Add a new admin user",
+     *     description="Creates a new user with name, email, password and type",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name","email","password","user_type"},
+     *             @OA\Property(property="name", type="string", example="John Doe"),
+     *             @OA\Property(property="email", type="string", format="email", example="johndoe@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="secretpassword"),
+     *             @OA\Property(property="password_confirmation", type="string", format="password", example="secretpassword"),
+     *             @OA\Property(property="type", type="string", example="admin"),
+     * 
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User registration successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="code", type="integer", example="0"),
+     *             @OA\Property(property="success", type="boolean", example="true"),
+     *             @OA\Property(property="error", type="string", example="null"),
+     *             @OA\Property(property="message", type="string", example="User registration successful"),
+     *             @OA\Property(property="data",type="object", ref="#/components/schemas/User")
+     * 
+     *         )
+     *     ),
+     *     @OA\Response(response=400, description="Invalid input")
+     * )
      */
     public function register(AuthRegisterRequest $request)
     {

@@ -2,7 +2,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Mdayo\User\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 
@@ -10,8 +9,8 @@ class UsersSeeder extends Seeder
 {
     public function run()
     {
-   
-        $user = User::firstOrCreate(['email' => config('user.default_admin.email')],[
+        $userModel = config('user.model');
+        $user = $userModel::firstOrCreate(['email' => config('user.default_admin.email')],[
                 'name' => config('user.default_admin.name'),
                 'password' => Hash::make(config('user.default_admin.password'))
         ]);

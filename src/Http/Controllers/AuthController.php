@@ -155,13 +155,14 @@ class AuthController extends Controller
             // 1️⃣ Create the role if it doesn't exist
             $role = Role::firstOrCreate(['name' => $userRole]);
             // 2️⃣ Assign the role to the user;
-            $user->assignRole($role);
+            $user->syncRoles($role);
 
             // 3️⃣ Get all permissions of this role
             $permissions = $role->permissions->pluck('name');
 
             // 4️⃣ Assign all these permissions directly to the user
-            $user->givePermissionTo($permissions);
+            $user->syncPermissions($permissions);
+            
             return $this->successResponse('User registration successful', $user);
         });
 

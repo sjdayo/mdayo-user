@@ -214,9 +214,13 @@ trait AuthControllerTrait
         return $this->successResponse('Login successful.', [
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'roles' => $user->getRoleNames(),
-            'permissions' => $user->getAllPermissions()->pluck('name'),
-            'user' => $user
+            'info' => [
+                'id'=>$user->id,
+                'name'=>$user->name,
+                'email'=>$user->email,
+                'roles' => $user->getRoleNames(),
+                'permissions' => $user->getAllPermissions()->pluck('name'),
+            ]
         ]);
     }
 
@@ -246,9 +250,13 @@ trait AuthControllerTrait
         $user = $request->user();
 
         $data = [
-            'info' => $user,
-            'roles' => $user->getRoleNames(),
-            'permissions' => $user->getAllPermissions()->pluck('name')
+            'info' => [
+                'id'=>$user->id,
+                'name'=>$user->name,
+                'email'=>$user->email,
+                'roles' => $user->getRoleNames(),
+                'permissions' => $user->getAllPermissions()->pluck('name'),
+            ]
         ];
 
         return $this->successResponse('Get info successful', $data);

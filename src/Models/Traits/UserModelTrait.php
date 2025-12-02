@@ -1,6 +1,6 @@
 <?php
 
-namespace Mdayo\User\Models;
+namespace Mdayo\User\Models\Traits;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;

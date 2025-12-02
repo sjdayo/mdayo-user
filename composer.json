@@ -23,8 +23,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Mdayo\\User\\UserServiceProvider",
-                "Mdayo\\User\\UserRouteServiceProvider"
+                "Mdayo\\User\\UserServiceProvider"
             ]
         }
     },

@@ -1,9 +1,8 @@
 <?php
 
-namespace Mdayo\User\Http\Controllers;
+namespace Mdayo\User\Http\Controllers\Traits;
 
 use Mdayo\User\Http\Requests\AuthRegisterRequest;
-use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -51,15 +50,9 @@ use Illuminate\Support\Facades\DB;
  *     @OA\Property(property="permissions", type="array", @OA\Items(type="string"), example={"edit articles","manage users"})
  * )
  */
-class AuthController extends Controller
+trait AuthControllerTrait
 {
-    /**
-     * Standard success response
-     */
-    protected string $model;
-    public function __construct(){
-        $this->model??=config('user.model');
-    }
+    
     private function successResponse(string $message, $data = null, int $status = 200)
     {
         return response()->json([
@@ -139,13 +132,14 @@ class AuthController extends Controller
 
         return DB::transaction(function() use($validated,$request){
             extract($validated);
-            
-            $user = $this->model::create([
+            $model = config('user.model');
+            $user = $model::create([
                 'name' => $name,
                 'email' => $email,
                 'password' => Hash::make($password)
             ]);
             $userRole = config('user.default_user_role','admin');
+            
             if($request->user())
             {
                 if($request->user()->hasRole('admin') && $request->user()->can('manage_user')){
@@ -162,6 +156,11 @@ class AuthController extends Controller
 
             // 4️⃣ Assign all these permissions directly to the user
             $user->syncPermissions($permissions);
+
+            if(method_exists($this, 'onRegistered')) {
+                 $this->onRegistered($user, $request);
+            }
+
             
             return $this->successResponse('User registration successful', $user);
         });
@@ -203,8 +202,8 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
-        
-        $user = $this->model::where('email', $request->email)->first();
+        $model = config('user.model');
+        $user = $model::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Invalid credentials'], 401);

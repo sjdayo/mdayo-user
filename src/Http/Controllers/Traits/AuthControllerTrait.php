@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
+use Mdayo\Wallet\Http\Resources\UserInfoResource;
 
 /**
  * @group User Management
@@ -52,17 +53,6 @@ use Illuminate\Support\Facades\DB;
  */
 trait AuthControllerTrait
 {
-    
-    private function successResponse(string $message, $data = null, int $status = 200)
-    {
-        return response()->json([
-            'code' => 0,
-            'success' => true,
-            'error' => null,
-            'message' => $message,
-            'data' => $data,
-        ], $status);
-    }
 
     /**
      * @OA\Post(
@@ -161,8 +151,16 @@ trait AuthControllerTrait
                  $this->onRegistered($user, $request);
             }
 
+            return response()->json([
+                'code' => 0,
+                'success' => true,
+                'error' => null,
+                'message' => 'User registration successful',
+                'data' =>  [
+                        'info' => new UserInfoResource($user)
+                ],
+            ], 200);
             
-            return $this->successResponse('User registration successful', $user);
         });
 
       
@@ -211,17 +209,22 @@ trait AuthControllerTrait
 
         $token = $user->createToken(config('user.auth_token_name', 'api-token'))->plainTextToken;
 
-        return $this->successResponse('Login successful.', [
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'info' => [
-                'id'=>$user->id,
-                'name'=>$user->name,
-                'email'=>$user->email,
-                'roles' => $user->getRoleNames(),
-                'permissions' => $user->getAllPermissions()->pluck('name'),
-            ]
-        ]);
+        if(method_exists($this, 'onLoggedIn')) {
+            $this->onLoggedIn($user, $token ,$request);
+        }
+
+        return response()->json([
+            'code' => 0,
+            'success' => true,
+            'error' => null,
+            'message' => 'Login successful.',
+            'data' =>  [
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'info' => new UserInfoResource($user)
+            ],
+        ], 200);
+
     }
 
     /**
@@ -249,17 +252,20 @@ trait AuthControllerTrait
     {
         $user = $request->user();
 
-        $data = [
-            'info' => [
-                'id'=>$user->id,
-                'name'=>$user->name,
-                'email'=>$user->email,
-                'roles' => $user->getRoleNames(),
-                'permissions' => $user->getAllPermissions()->pluck('name'),
-            ]
-        ];
+        
+        if(method_exists($this, 'onShown')) {
+            $this->onShown($user,$request);
+        }
+        return response()->json([
+            'code' => 0,
+            'success' => true,
+            'error' => null,
+            'message' => 'Get info successful',
+            'data' =>  [
+                'info' => new UserInfoResource($user)
+            ],
+        ], 200);
 
-        return $this->successResponse('Get info successful', $data);
     }
 
     /**
@@ -283,8 +289,19 @@ trait AuthControllerTrait
      * )
      */
     public function logout(Request $request)
-    {
+    {   
         $request->user()->tokens()->delete();
-        return $this->successResponse('Log out successful');
+
+        if(method_exists($this, 'onLoggedOut')) {
+            $this->onLoggedOut($request);
+        }
+        
+        return response()->json([
+            'code' => 0,
+            'success' => true,
+            'error' => null,
+            'message' => 'Log out successful',   
+        ], 200);
+        
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mdayo\Wallet\Http\Resources;
+namespace Mdayo\User\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

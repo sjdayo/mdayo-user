@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
-use Mdayo\Wallet\Http\Resources\UserInfoResource;
+use Mdayo\User\Http\Resources\UserInfoResource;
 
 /**
  * @group User Management
